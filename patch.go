@@ -69,7 +69,7 @@ func newPatch(buf []byte) (res patch, err error) {
 
 	for _, op := range res {
 		if op.Path == nil {
-			return res, fmt.Errorf("Did not get valid Path")
+			return res, fmt.Errorf("Did not get valid path")
 		}
 		switch op.Op {
 		case "test":
@@ -78,14 +78,14 @@ func newPatch(buf []byte) (res patch, err error) {
 			fallthrough
 		case "add":
 			if op.Value == nil {
-				return res, fmt.Errorf("%v must have a valid Value", op.Op)
+				return res, fmt.Errorf("%v must have a valid value", op.Op)
 
 			}
 		case "move":
 			fallthrough
 		case "copy":
 			if op.From == nil {
-				return res, fmt.Errorf("%v must have a From", op.Op)
+				return res, fmt.Errorf("%v must have a from", op.Op)
 			}
 		case "remove":
 			continue
