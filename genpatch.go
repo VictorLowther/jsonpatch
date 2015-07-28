@@ -5,8 +5,9 @@ import (
 	"reflect"
 )
 
-// This generator does not create Copy or move patch ops, and I don't
+// This generator does not create copy or move patch ops, and I don't
 // care enough to optimize it to do so.  Ditto for slice handling.
+// There is a lot of optimization that could be done here, but it can get complex real quick.
 func basicGen(base, target interface{}, paranoid bool, ptr pointer) patch {
 	res := make(patch, 0)
 	if reflect.TypeOf(base) != reflect.TypeOf(target) {
@@ -64,4 +65,17 @@ func basicGen(base, target interface{}, paranoid bool, ptr pointer) patch {
 func Generate(base, target interface{}, paranoid bool) ([]byte, error) {
 	p := basicGen(base, target, paranoid, make(pointer, 0))
 	return json.Marshal(p)
+}
+
+// GenerateJSON does the same thing as Generate, except base and
+// target should be byte arrays containing raw JSON
+func GenerateJSON(base, target []byte, paranoid bool) ([]byte, error) {
+	var rawBase, rawTarget interface{}
+	if err := json.Unmarshal(base, &rawBase); err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(target, &rawTarget); err != nil {
+		return nil, err
+	}
+	return Generate(rawBase, rawTarget, paranoid)
 }

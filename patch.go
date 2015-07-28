@@ -117,3 +117,19 @@ func Apply(base interface{}, rawPatch []byte) (result interface{}, err error, lo
 	}
 	return result, nil, 0
 }
+
+// ApplyJSON does the same thing as Apply, except the inputs should be
+// JSON-containing byte arrays instead of unmarshalled JSON
+func ApplyJSON(base, rawPatch []byte) (result []byte, err error, loc int) {
+	var rawBase interface{}
+	err = json.Unmarshal(base, &rawBase)
+	if err != nil {
+		return nil, err, 0
+	}
+	rawRes, err, int := Apply(rawBase, rawPatch)
+	if err != nil {
+		return nil, err, loc
+	}
+	result, err = json.Marshal(rawRes)
+	return result, err, loc
+}
