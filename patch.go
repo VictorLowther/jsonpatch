@@ -37,6 +37,8 @@ type operation struct {
 	Value interface{} `json:"value,omitempty"`
 }
 
+const ContentType = "application/json-patch+json"
+
 // Apply performs a single patch operation
 func (o *operation) Apply(to interface{}) (interface{}, error) {
 	switch o.Op {
