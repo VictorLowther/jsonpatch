@@ -128,7 +128,7 @@ func ApplyJSON(base, rawPatch []byte) (result []byte, err error, loc int) {
 	if err != nil {
 		return nil, err, 0
 	}
-	rawRes, err, int := Apply(rawBase, rawPatch)
+	rawRes, err, loc := Apply(rawBase, rawPatch)
 	if err != nil {
 		return nil, err, loc
 	}
