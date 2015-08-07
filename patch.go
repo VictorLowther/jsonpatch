@@ -14,6 +14,8 @@ package jsonpatch
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/VictorLowther/jsonpatch/utils"
 )
 
 // operation represents a valid JSON Patch operation as defined by RFC 6902
@@ -110,7 +112,7 @@ func Apply(base interface{}, rawPatch []byte) (result interface{}, err error, lo
 	if err != nil {
 		return nil, err, 0
 	}
-	result = clone(base)
+	result = utils.Clone(base)
 	for i, op := range p {
 		result, err = op.Apply(result)
 		if err != nil {

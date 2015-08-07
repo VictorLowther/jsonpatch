@@ -3,6 +3,8 @@ package jsonpatch
 import (
 	"encoding/json"
 	"reflect"
+
+	"github.com/VictorLowther/jsonpatch/utils"
 )
 
 // This generator does not create copy or move patch ops, and I don't
@@ -12,9 +14,9 @@ func basicGen(base, target interface{}, paranoid bool, ptr pointer) patch {
 	res := make(patch, 0)
 	if reflect.TypeOf(base) != reflect.TypeOf(target) {
 		if paranoid {
-			res = append(res, operation{"test", ptr, nil, clone(base)})
+			res = append(res, operation{"test", ptr, nil, utils.Clone(base)})
 		}
-		res = append(res, operation{"replace", ptr, nil, clone(target)})
+		res = append(res, operation{"replace", ptr, nil, utils.Clone(target)})
 		return res
 	}
 	switch baseVal := base.(type) {
@@ -28,7 +30,7 @@ func basicGen(base, target interface{}, paranoid bool, ptr pointer) patch {
 			if !ok {
 				// Generate a remove op
 				if paranoid {
-					res = append(res, operation{"test", newPtr, nil, clone(oldVal)})
+					res = append(res, operation{"test", newPtr, nil, utils.Clone(oldVal)})
 				}
 				res = append(res, operation{"remove", newPtr, nil, nil})
 			} else {
@@ -42,7 +44,7 @@ func basicGen(base, target interface{}, paranoid bool, ptr pointer) patch {
 			if _, ok := handled[k]; ok {
 				continue
 			}
-			res = append(res, operation{"add", ptr.Append(k), nil, clone(newVal)})
+			res = append(res, operation{"add", ptr.Append(k), nil, utils.Clone(newVal)})
 		}
 	// case []interface{}:
 	// Eventually, add code to handle slices more
@@ -50,9 +52,9 @@ func basicGen(base, target interface{}, paranoid bool, ptr pointer) patch {
 	default:
 		if !reflect.DeepEqual(base, target) {
 			if paranoid {
-				res = append(res, operation{"test", ptr, nil, clone(base)})
+				res = append(res, operation{"test", ptr, nil, utils.Clone(base)})
 			}
-			res = append(res, operation{"replace", ptr, nil, clone(target)})
+			res = append(res, operation{"replace", ptr, nil, utils.Clone(target)})
 		}
 	}
 	return res

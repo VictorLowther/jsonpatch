@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/VictorLowther/jsonpatch/utils"
 )
 
 // pointerSegment is an individual fragment of a pointer.
@@ -259,32 +261,13 @@ func (p *pointer) Remove(from interface{}) (interface{}, error) {
 	return from, nil
 }
 
-func clone(val interface{}) interface{} {
-	switch t := val.(type) {
-	case []interface{}:
-		res := make([]interface{}, len(t))
-		for i := range t {
-			res[i] = clone(t[i])
-		}
-		return res
-	case map[string]interface{}:
-		res := make(map[string]interface{}, len(t))
-		for k, v := range t {
-			res[k] = clone(v)
-		}
-		return res
-	default:
-		return val
-	}
-}
-
 // Copy deep-copies the value pointed to by p in from to the location pointed to by at.
 func (p pointer) Copy(from interface{}, at pointer) (interface{}, error) {
 	val, err := p.Get(from)
 	if err != nil {
 		return from, err
 	}
-	return at.Put(from, clone(val))
+	return at.Put(from, utils.Clone(val))
 }
 
 // Move moves the value pointed to by p in from to the location pointed to by at.
