@@ -67,3 +67,12 @@ func MergeJSON(src, changes []byte) ([]byte, error) {
 	resObj = merge(srcObj, changesObj)
 	return json.Marshal(resObj)
 }
+
+// Remarshal marshals src and then unmarshals it into target.
+func Remarshal(src, target interface{}) error {
+	r, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(r, &target)
+}
