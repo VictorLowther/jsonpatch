@@ -34,9 +34,22 @@ type operation struct {
 	Path pointer `json:"path"`
 	// From is a JSON pointer indicating where a value should be
 	// copied/moved from.  From is only used by copy and move operations.
-	From pointer `json:"from,omitempty"`
+	From pointer `json:"from"`
 	// Value is the Value to be used for add, replace, and test operations.
-	Value interface{} `json:"value,omitempty"`
+	Value interface{} `json:"value"`
+}
+
+func (o *operation) MarshalJSON() ([]byte, error) {
+	res := map[string]interface{}{}
+	res["op"] = o.Op
+	res["path"] = o.Path
+	switch o.Op {
+	case "copy", "move":
+		res["from"] = o.From
+	case "add", "replace", "test":
+		res["value"] = o.Value
+	}
+	return json.Marshal(res)
 }
 
 const ContentType = "application/json-patch+json"
